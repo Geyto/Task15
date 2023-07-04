@@ -2,13 +2,7 @@ let cities = [];
 let person = [];
 let specializations = [];
 
-Promise.all(
-    [
-        fetch('cities.json'),
-        fetch('person.json'),
-        fetch('specializations.json'),
-    ]
-).then(async ([citiesResponse, personResponse, specializationsResponse]) => {
+Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.json'),]).then(async ([citiesResponse, personResponse, specializationsResponse]) => {
     const citiesJson = await citiesResponse.json();
     const personJson = await personResponse.json();
     const specializationsJson = await specializationsResponse.json();
@@ -18,12 +12,13 @@ Promise.all(
         cities = response[0];
         person = response[1];
         specializations = response[2];
-        // getInfo.call(person);
-        // getInfoDesigner();
-        // firstDevReact();
-        // checkAgePerson();
-        // backendDev();
+        getInfo.call(person);
+        getInfoDesigner();
+        firstDevReact();
+        checkAgePerson();
+        backendDev();
         highLvlDesigner();
+        topTeam();
     })
 
 
@@ -66,6 +61,7 @@ function getInfo() {
         console.log(newArrayWithCity[i].getInfoPersonal());
     }
 }
+
 function getInfoDesigner() {
     let addedNewKeyForDesigner = person.map(item => {
         let specialization = specializations.find(function (specializationItem) {
@@ -74,45 +70,48 @@ function getInfoDesigner() {
         if (specialization && specialization.name) {
             item.specialization = specialization.name;
         }
-            return item
+        return item
     })
-    let onlyDesigner = addedNewKeyForDesigner.filter(item =>{
-        for (let i = 0; i < item.skills.length; i ++){
-            if (item.specialization === 'designer' && item.skills[i].name === 'Figma'){
+    let onlyDesigner = addedNewKeyForDesigner.filter(item => {
+        for (let i = 0; i < item.skills.length; i++) {
+            if (item.specialization === 'designer' && item.skills[i].name === 'Figma') {
                 return item
             }
         }
     })
-    console.log(onlyDesigner)
+    console.log(onlyDesigner);
 
 }
+
 function firstDevReact() {
     let DevReact = person.find(item => {
-        for (i = 0; i < item.skills.length; i++){
-            if (item.skills[i].name === 'React'){
+        for (i = 0; i < item.skills.length; i++) {
+            if (item.skills[i].name === 'React') {
                 return item
             }
         }
     })
     console.log(DevReact);
 }
+
 function checkAgePerson() {
     let checkAge = person.every(item => {
-        person.forEach(item =>{
+        person.forEach(item => {
             let dateParts = item.personal.birthday.split('.');
-            let birthday = new Date( dateParts[2] , dateParts[1] , dateParts[0]);
+            let birthday = new Date(dateParts[2], dateParts[1], dateParts[0]);
             let today = new Date();
             let birthdayNewYear = new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate());
             let age = today.getFullYear() - birthday.getFullYear();
-            if (today < birthdayNewYear){
+            if (today < birthdayNewYear) {
                 age -= 1;
             }
-            return  item.personal.age = age;
+            return item.personal.age = age;
         })
-        return  item.personal.age > 18;
+        return item.personal.age > 18;
     })
-    console.log(checkAge)
+    console.log(checkAge);
 }
+
 function backendDev() {
     let arrayBackend = person.map(item => {
         let specialization = specializations.find(function (specializationItem) {
@@ -124,8 +123,8 @@ function backendDev() {
         if (specialization && specialization.name && city && city.name) {
             item.specialization = specialization.name;
             item.city = city.name
-            for(let i = 0; i < item.request.length; i++){
-                if(item.request[i].name === 'Зарплата'){
+            for (let i = 0; i < item.request.length; i++) {
+                if (item.request[i].name === 'Зарплата') {
                     let wantCash = item.request[i].value;
                     item.price = wantCash;
                 }
@@ -133,22 +132,19 @@ function backendDev() {
         }
         return item
     })
-    let onlyBackend = arrayBackend.filter(item =>{
-        for (let i = 0; i < item.request.length; i ++){
-            if (item.specialization === 'backend' && item.city === "Москва" && item.request[i].value === "Полная"){
+    let onlyBackend = arrayBackend.filter(item => {
+        for (let i = 0; i < item.request.length; i++) {
+            if (item.specialization === 'backend' && item.city === "Москва" && item.request[i].value === "Полная") {
                 return item
             }
         }
     })
     let backendDevWantCash = onlyBackend.sort(function (a, b) {
-        if (a.price > b.price) {
-            return 1; }
-        if (a.price < b.price) {
-            return -1; }
-        return 0;
+
     })
     console.log(backendDevWantCash)
 }
+
 function highLvlDesigner() {
     let arrayDesigner = person.map(item => {
         let specialization = specializations.find(function (specializationItem) {
@@ -156,12 +152,12 @@ function highLvlDesigner() {
         });
         if (specialization && specialization.name) {
             item.specialization = specialization.name;
-            for(let i = 0; i < item.skills.length; i++){
-                if(item.skills[i].name === 'Figma'){
+            for (let i = 0; i < item.skills.length; i++) {
+                if (item.skills[i].name === 'Figma') {
                     let lvlSkillFigma = item.skills[i].level;
                     item.levelFigma = lvlSkillFigma;
                 }
-                if (item.skills[i].name === 'Photoshop'){
+                if (item.skills[i].name === 'Photoshop') {
                     let lvlSkillPhotoshop = item.skills[i].level;
                     item.levelPhotoshop = lvlSkillPhotoshop;
                 }
@@ -169,10 +165,65 @@ function highLvlDesigner() {
         }
         return item
     })
-    let onlyHighLvlDes = arrayDesigner.filter(item =>{
-        if (item.specialization === 'designer' && item.levelFigma >= 6 && item.levelPhotoshop >= 6){
+    let onlyHighLvlDes = arrayDesigner.filter(item => {
+        if (item.specialization === 'designer' && item.levelFigma >= 6 && item.levelPhotoshop >= 6) {
             return item
         }
     })
     console.log(onlyHighLvlDes)
 }
+
+function topTeam() {
+    let arrayPerson = person.map(item => {
+        let specialization = specializations.find(function (specializationItem) {
+            return specializationItem.id === item.personal.specializationId;
+        });
+        if (specialization && specialization.name) {
+            item.specialization = specialization.name;
+            for (let i = 0; i < item.skills.length; i++) {
+                if (item.specialization === 'designer' && item.skills[i].name === 'Figma') {
+                    let lvlSkillFigma = item.skills[i].level;
+                    item.levelFigma = lvlSkillFigma;
+                }
+                if (item.specialization === 'frontend' && item.skills[i].name === 'Angular') {
+                    let lvlSkillAngular = item.skills[i].level;
+                    item.levelAngular = lvlSkillAngular;
+                }
+                if (item.specialization === 'backend' && item.skills[i].name === 'Go') {
+                    let lvlSkillGo = item.skills[i].level;
+                    item.levelGo = lvlSkillGo;
+                }
+            }
+        }
+        return item
+    })
+    let onlyDes = arrayPerson.filter(item => {
+        if (item.specialization === 'designer' && item.levelFigma) {
+            return item
+        }
+    });
+    let onlyFront = arrayPerson.filter(item => {
+        if (item.specialization === 'frontend' && item.levelAngular) {
+            return item
+        }
+    });
+    let onlyBack = arrayPerson.filter(item => {
+        if (item.specialization === 'backend' && item.levelGo) {
+            return item
+        }
+    });
+    let onlyHighLvlDes = onlyDes.sort((a, b) => {
+        return b.levelFigma - a.levelFigma
+    })[0];
+    let onlyHighLvlFront = onlyFront.sort((a, b) => {
+        return b.levelAngular - a.levelAngular
+    })[0];
+    let onlyHighLvlBack = onlyBack.sort((a, b) => {
+        return b.levelGo - a.levelGo
+    })[0];
+
+    console.log(onlyHighLvlDes);
+    console.log(onlyHighLvlFront);
+    console.log(onlyHighLvlBack);
+}
+
