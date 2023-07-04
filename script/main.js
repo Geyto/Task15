@@ -23,7 +23,7 @@ Promise.all(
         // firstDevReact();
         // checkAgePerson();
         // backendDev();
-
+        highLvlDesigner();
     })
 
 
@@ -148,4 +148,31 @@ function backendDev() {
         return 0;
     })
     console.log(backendDevWantCash)
+}
+function highLvlDesigner() {
+    let arrayDesigner = person.map(item => {
+        let specialization = specializations.find(function (specializationItem) {
+            return specializationItem.id === item.personal.specializationId;
+        });
+        if (specialization && specialization.name) {
+            item.specialization = specialization.name;
+            for(let i = 0; i < item.skills.length; i++){
+                if(item.skills[i].name === 'Figma'){
+                    let lvlSkillFigma = item.skills[i].level;
+                    item.levelFigma = lvlSkillFigma;
+                }
+                if (item.skills[i].name === 'Photoshop'){
+                    let lvlSkillPhotoshop = item.skills[i].level;
+                    item.levelPhotoshop = lvlSkillPhotoshop;
+                }
+            }
+        }
+        return item
+    })
+    let onlyHighLvlDes = arrayDesigner.filter(item =>{
+        if (item.specialization === 'designer' && item.levelFigma >= 6 && item.levelPhotoshop >= 6){
+            return item
+        }
+    })
+    console.log(onlyHighLvlDes)
 }
