@@ -1,134 +1,65 @@
 let cities = [];
-let person = [];
+let persons = [];
 let specializations = [];
 
 Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.json'),]).then(async ([citiesResponse, personResponse, specializationsResponse]) => {
-    const [citiesJson, personJson, specializationsJson] = await  Promise.all(
-        [
-            citiesResponse.json(),
-            personResponse.json(),
-            specializationsResponse.json(),
-        ]
-    );
+    const [citiesJson, personJson, specializationsJson] = await Promise.all([citiesResponse.json(), personResponse.json(), specializationsResponse.json(),]);
     return [citiesJson, personJson, specializationsJson];
 })
     .then(([citiesJson, personJson, specializationsJson]) => {
         cities = citiesJson;
-        person = personJson;
+        persons = personJson;
         specializations = specializationsJson;
-        console.log(getInfo.call(person[0]));
-        // getInfoDesigner();
-        // firstDevReact();
-        // checkAgePerson();
-        // backendDev();
+        // console.log(getInfo.call(persons[0]));
+        // console.log(getInfoDesigner());
+        // console.log(firstDevReact());
+        // console.log(checkAgePerson());
+        console.log(backendDev(persons[0]));
         // highLvlDesigner();
         // topTeam();
     })
 
-
-// function getInfo() {
-//
-//     let newArrayWithCity = person.map(item => {
-//         let city = cities.find( function (cityItem) {
-//             return  cityItem.id === item.personal.locationId;
-//         });
-//         if (city && city.name) {
-//             item.city = city.name
-//         }
-//         return item;
-//     })
-//     newArrayWithCity.forEach(arrayWithPersonalInfo =>{
-//         let infoAboutPerson = arrayWithPersonalInfo.personal.firstName + ' ' + arrayWithPersonalInfo.personal.lastName + ', ' + arrayWithPersonalInfo.city;
-//         console.log(infoAboutPerson);
-//     })
-//
-// }
 function getInfo() {
     const city = cities.find((city) => city.id === this.personal.locationId);
     return `${this.personal.firstName} ${this.personal.lastName}, ${city.name}`;
 }
 
 function getInfoDesigner() {
-    let addedNewKeyForDesigner = person.map(item => {
-        let specialization = specializations.find(function (specializationItem) {
-            return specializationItem.id === item.personal.specializationId;
-        });
-        if (specialization && specialization.name) {
-            item.specialization = specialization.name;
-        }
-        return item
-    })
-    let onlyDesigner = addedNewKeyForDesigner.filter(item => {
-        for (let i = 0; i < item.skills.length; i++) {
-            if (item.specialization === 'designer' && item.skills[i].name === 'Figma') {
-                return item
-            }
-        }
-    })
-    console.log(onlyDesigner);
-
+    const designer = specializations.find((specialization) => specialization.name.toLowerCase() === 'designer');
+    return persons.filter((person) => {
+        return (
+            person.skills.find((skill) => skill.name.toLowerCase() === 'figma' && person.personal.specializationId === designer.id));
+    });
 }
 
 function firstDevReact() {
-    let DevReact = person.find(item => {
-        for (i = 0; i < item.skills.length; i++) {
-            if (item.skills[i].name === 'React') {
-                return item
-            }
-        }
-    })
-    console.log(DevReact);
+    const frontDev = specializations.find((specialization) => specialization.name.toLowerCase() === 'frontend');
+    return persons.filter((person) => {
+        return (
+            person.skills.find((skill) => skill.name.toLowerCase() === 'react' && person.personal.specializationId === frontDev.id));
+    })[0];
 }
 
 function checkAgePerson() {
-    let checkAge = person.every(item => {
-        person.forEach(item => {
-            let dateParts = item.personal.birthday.split('.');
-            let birthday = new Date(dateParts[2], dateParts[1], dateParts[0]);
-            let today = new Date();
-            let birthdayNewYear = new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate());
-            let age = today.getFullYear() - birthday.getFullYear();
-            if (today < birthdayNewYear) {
-                age -= 1;
-            }
-            return item.personal.age = age;
-        })
-        return item.personal.age > 18;
+    return persons.every(({personal: {birthday}}) => {
+        const bd = new Date(birthday);
+        const ageInMs = Date.now()-bd.getTime();
+        const ageInDate = new Date(ageInMs);
+        const personAge = ageInDate.getUTCFullYear() - 1970;
+        return personAge > 18;
     })
-    console.log(checkAge);
 }
 
 function backendDev() {
-    let arrayBackend = person.map(item => {
-        let specialization = specializations.find(function (specializationItem) {
-            return specializationItem.id === item.personal.specializationId;
-        });
-        let city = cities.find(function (cityItem) {
-            return cityItem.id === item.personal.locationId;
-        });
-        if (specialization && specialization.name && city && city.name) {
-            item.specialization = specialization.name;
-            item.city = city.name
-            for (let i = 0; i < item.request.length; i++) {
-                if (item.request[i].name === 'Зарплата') {
-                    let wantCash = item.request[i].value;
-                    item.price = wantCash;
-                }
-            }
-        }
-        return item
+    const backendDev = specializations.find((specialization) => specialization.name.toLowerCase() === 'backend');
+    const city = cities.find((city) => city.name === 'Москва');
+    const arrayBackDewMoscow = persons.filter((person) => {
+        return (
+            person.request.find((request) => request.value === 'Полная' && person.personal.specializationId === backendDev.id && person.personal.locationId === city.id));
+    });
+    return  arrayBackDewMoscow.sort(function (a,b){
+        return a.request[0].value - b.request[0].value
     })
-    let onlyBackend = arrayBackend.filter(item => {
-        for (let i = 0; i < item.request.length; i++) {
-            if (item.specialization === 'backend' && item.city === "Москва" && item.request[i].value === "Полная") {
-                return item
-            }
-        }
-    })
-    let backendDevWantCash = onlyBackend.sort(function (a, b) {
-
-    })
-    console.log(backendDevWantCash)
 }
 
 function highLvlDesigner() {
