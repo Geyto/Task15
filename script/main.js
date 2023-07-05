@@ -3,15 +3,19 @@ let person = [];
 let specializations = [];
 
 Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.json'),]).then(async ([citiesResponse, personResponse, specializationsResponse]) => {
-    const citiesJson = await citiesResponse.json();
-    const personJson = await personResponse.json();
-    const specializationsJson = await specializationsResponse.json();
+    const [citiesJson, personJson, specializationsJson] = await  Promise.all(
+        [
+            citiesResponse.json(),
+            personResponse.json(),
+            specializationsResponse.json(),
+        ]
+    );
     return [citiesJson, personJson, specializationsJson];
 })
-    .then(response => {
-        cities = response[0];
-        person = response[1];
-        specializations = response[2];
+    .then(([citiesJson, personJson, specializationsJson]) => {
+        cities = citiesJson;
+        person = personJson;
+        specializations = specializationsJson;
         getInfo.call(person);
         getInfoDesigner();
         firstDevReact();
