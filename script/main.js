@@ -16,13 +16,13 @@ Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.
         cities = citiesJson;
         person = personJson;
         specializations = specializationsJson;
-        getInfo.call(person);
-        getInfoDesigner();
-        firstDevReact();
-        checkAgePerson();
-        backendDev();
-        highLvlDesigner();
-        topTeam();
+        console.log(getInfo.call(person[0]));
+        // getInfoDesigner();
+        // firstDevReact();
+        // checkAgePerson();
+        // backendDev();
+        // highLvlDesigner();
+        // topTeam();
     })
 
 
@@ -44,26 +44,8 @@ Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.
 //
 // }
 function getInfo() {
-    let newArrayWithCity = person.map(item => {
-        let city = cities.find(function (cityItem) {
-            return cityItem.id === item.personal.locationId;
-        });
-        if (city && city.name) {
-            item.city = city.name;
-        }
-        return item;
-    })
-    newArrayWithCity.forEach(item => {
-        item.getInfoPersonal = getInfoPersonalConsole;
-    })
-
-    function getInfoPersonalConsole() {
-        return this.personal.firstName + ' ' + this.personal.lastName + ', ' + this.city;
-    }
-
-    for (let i = 0; i < newArrayWithCity.length; i++) {
-        console.log(newArrayWithCity[i].getInfoPersonal());
-    }
+    const city = cities.find((city) => city.id === this.personal.locationId);
+    return `${this.personal.firstName} ${this.personal.lastName}, ${city.name}`;
 }
 
 function getInfoDesigner() {
