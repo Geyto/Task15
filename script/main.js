@@ -14,8 +14,8 @@ Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.
         // console.log(getInfoDesigner());
         // console.log(firstDevReact());
         // console.log(checkAgePerson());
-        console.log(backendDev(persons[0]));
-        // highLvlDesigner();
+        // console.log(backendDev(persons[0]));
+        console.log(highLvlDesigner());
         // topTeam();
     })
 
@@ -63,31 +63,14 @@ function backendDev() {
 }
 
 function highLvlDesigner() {
-    let arrayDesigner = person.map(item => {
-        let specialization = specializations.find(function (specializationItem) {
-            return specializationItem.id === item.personal.specializationId;
-        });
-        if (specialization && specialization.name) {
-            item.specialization = specialization.name;
-            for (let i = 0; i < item.skills.length; i++) {
-                if (item.skills[i].name === 'Figma') {
-                    let lvlSkillFigma = item.skills[i].level;
-                    item.levelFigma = lvlSkillFigma;
-                }
-                if (item.skills[i].name === 'Photoshop') {
-                    let lvlSkillPhotoshop = item.skills[i].level;
-                    item.levelPhotoshop = lvlSkillPhotoshop;
-                }
-            }
-        }
-        return item
-    })
-    let onlyHighLvlDes = arrayDesigner.filter(item => {
-        if (item.specialization === 'designer' && item.levelFigma >= 6 && item.levelPhotoshop >= 6) {
-            return item
-        }
-    })
-    console.log(onlyHighLvlDes)
+    const designer = specializations.find((specialization) => specialization.name.toLowerCase() === 'designer');
+    const firstfilter = persons.filter((person) => {
+         return  person.skills.find((skill) => skill.name.toLowerCase() === 'figma' && person.personal.specializationId === designer.id && skill.level >= 6);
+    });
+    return firstfilter.filter((person) => {
+        return  person.skills.find((skill) => skill.name.toLowerCase() === 'photoshop' && person.personal.specializationId === designer.id && skill.level >= 6);
+    });
+
 }
 
 function topTeam() {
