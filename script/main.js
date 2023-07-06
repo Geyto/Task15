@@ -10,13 +10,13 @@ Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.
         cities = citiesJson;
         persons = personJson;
         specializations = specializationsJson;
-        // console.log(getInfo.call(persons[0]));
-        // console.log(getInfoDesigner());
-        // console.log(firstDevReact());
-        // console.log(checkAgePerson());
-        // console.log(backendDev(persons[0]));
+        console.log(getInfo.call(persons[0]));
+        console.log(getInfoDesigner());
+        console.log(firstDevReact());
+        console.log(checkAgePerson());
+        console.log(backendDev(persons[0]));
         console.log(highLvlDesigner());
-        // topTeam();
+        topTeam();
     })
 
 function getInfo() {
@@ -74,56 +74,44 @@ function highLvlDesigner() {
 }
 
 function topTeam() {
-    let arrayPerson = person.map(item => {
-        let specialization = specializations.find(function (specializationItem) {
-            return specializationItem.id === item.personal.specializationId;
-        });
-        if (specialization && specialization.name) {
-            item.specialization = specialization.name;
-            for (let i = 0; i < item.skills.length; i++) {
-                if (item.specialization === 'designer' && item.skills[i].name === 'Figma') {
-                    let lvlSkillFigma = item.skills[i].level;
-                    item.levelFigma = lvlSkillFigma;
-                }
-                if (item.specialization === 'frontend' && item.skills[i].name === 'Angular') {
-                    let lvlSkillAngular = item.skills[i].level;
-                    item.levelAngular = lvlSkillAngular;
-                }
-                if (item.specialization === 'backend' && item.skills[i].name === 'Go') {
-                    let lvlSkillGo = item.skills[i].level;
-                    item.levelGo = lvlSkillGo;
-                }
+    const designer = specializations.find((specialization) => specialization.name.toLowerCase() === 'designer');
+    const desFigma = persons.filter((person) => {
+        return  person.skills.find((skill) => skill.name.toLowerCase() === 'figma' && person.personal.specializationId === designer.id);
+    });
+    const topDes = desFigma.sort((a, b) => {
+        for (let i = 0; i < a.skills.length; i++){
+            if (a.skills[i].name === 'Figma' && b.skills[i].name === 'Figma'){
+                return +b.skills[i].level - a.skills[i].level;
             }
-        }
-        return item
-    })
-    let onlyDes = arrayPerson.filter(item => {
-        if (item.specialization === 'designer' && item.levelFigma) {
-            return item
-        }
+        }}
+    )[0]
+    console.log(topDes)
+    const front = specializations.find((specialization) => specialization.name.toLowerCase() === 'frontend');
+    const frontAngular = persons.filter((person) => {
+        return  person.skills.find((skill) => skill.name.toLowerCase() === 'angular' && person.personal.specializationId === front.id);
     });
-    let onlyFront = arrayPerson.filter(item => {
-        if (item.specialization === 'frontend' && item.levelAngular) {
-            return item
-        }
-    });
-    let onlyBack = arrayPerson.filter(item => {
-        if (item.specialization === 'backend' && item.levelGo) {
-            return item
-        }
-    });
-    let onlyHighLvlDes = onlyDes.sort((a, b) => {
-        return b.levelFigma - a.levelFigma
-    })[0];
-    let onlyHighLvlFront = onlyFront.sort((a, b) => {
-        return b.levelAngular - a.levelAngular
-    })[0];
-    let onlyHighLvlBack = onlyBack.sort((a, b) => {
-        return b.levelGo - a.levelGo
-    })[0];
+    const topFront = frontAngular.sort(
+        (a, b) => {
+            for (let i = 0; i < a.skills.length; i++){
+            if (a.skills[i].name === 'Angular' && b.skills[i].name === 'Angular'){
+                return +b.skills[i].level - a.skills[i].level;
+            }
+        }}
+    )[0]
+console.log(topFront)
 
-    console.log(onlyHighLvlDes);
-    console.log(onlyHighLvlFront);
-    console.log(onlyHighLvlBack);
+    const back = specializations.find((specialization) => specialization.name.toLowerCase() === 'backend');
+    const backGo = persons.filter((person) => {
+        return  person.skills.find((skill) => skill.name.toLowerCase() === 'go' && person.personal.specializationId === back.id);
+    });
+    const topBack = backGo.sort(
+        (a, b) => {
+            for (let i = 0; i < a.skills.length; i++){
+                if (a.skills[i].name === 'Go' && b.skills[i].name === 'Go'){
+                    return +b.skills[i].level - a.skills[i].level;
+                }
+            }}
+    )[0]
+    console.log(topBack)
 }
 
