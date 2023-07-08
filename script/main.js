@@ -10,15 +10,26 @@ Promise.all([fetch('cities.json'), fetch('person.json'), fetch('specializations.
         cities = citiesJson;
         persons = personJson;
         specializations = specializationsJson;
-        // console.log(getInfo.call(persons[0]));
-        // console.log(getInfoDesigner());
-        // console.log(firstDevReact());
-        // console.log(checkAgePerson());
-        // console.log(backendDev(persons[0]));
-        // console.log(highLvlDesigner());
-        // topTeam();
+        processData();
     })
 
+function processData() {
+    console.log('Task 2:');
+    console.log(getInfo.call(persons[0]));
+    console.log('Task 3:');
+    console.log(getInfoDesigner());
+    console.log('Task 4:');
+    console.log(firstDevReact());
+    console.log('Task 5:');
+    console.log(checkAgePerson());
+    console.log('Task 6:');
+    console.log(backendDev(persons[0]));
+    console.log('Task 7:');
+    console.log(highLvlDesigner());
+    console.log('Task 8:');
+    const bestTeam = topTeam();
+    bestTeam.forEach((dev) => console.log(getInfo.call(dev)));
+}
 function getInfo() {
     const city = cities.find((city) => city.id === this.personal.locationId);
     return `${this.personal.firstName} ${this.personal.lastName}, ${city.name}`;
@@ -73,63 +84,76 @@ function highLvlDesigner() {
 
 }
 
+function topTeam() {
 
+    const arrayTopTeam = [];
+// best designer
+    const figmaDes = persons.filter((person) =>{
+        return isDesignerPersons(person) && hasFigmaSkill(person);
+    })
+    let bestDes = null
+    bestDes = figmaDes.reduce((result, current) =>{
+        let prev = getFigmaSkills(result);
+        let curr = getFigmaSkills(current);
+        return prev > curr ? result : current
+    }, figmaDes[0]);
+// best frontend developer
+    let bestFront = null;
+    const frontAngular = persons.filter((person) => {
+        return isFrontDev(person) && hasAngularSkill(person)
+    });
 
-const figmaDes = persons.filter((person) =>{
-    console.log(hasFigmaSkill(person))
-    return isDesignerPersons(person) && hasFigmaSkill(person);
-})
+    bestFront = frontAngular.reduce((result, current) =>{
+        let prev = getAngularSkill(result);
+        let curr = getAngularSkill(current);
+        return prev > curr ? result : current;
+    }, frontAngular[0]);
+// best backend developer
+    let bestBack = null;
+    const backGo = persons.filter((person) => {
+        return isBackDev(person) && hasGoSkill(person)
+    });
 
-let bestDes = null
-bestDes = figmaDes.reduce((result, current) =>{
-    let prev = getFigmaSkills(result);
-    let curr = getFigmaSkills(current);
-    return prev > curr ? result : current
-}, figmaDes[0]);
+    bestBack = backGo.reduce((result, current) =>{
+        let prev = getGoSkill(result);
+        let curr = getGoSkill(current);
+        return prev > curr ? result : current;
+    }, backGo[0]);
+    arrayTopTeam.push(bestDes, bestFront, bestBack);
+    return arrayTopTeam
+}
 
+//Helpers
+const isFrontDev = (person) => {
+    const frontend = specializations.find((item) => item.name.toLowerCase() === 'frontend');
+    return person.personal.specializationId === frontend.id
+};
+const hasAngularSkill = (person) => {
+    return person.skills.find((item) => item.name.toLowerCase() === 'angular')
+};
+const getAngularSkill = (person) => {
+    const angularSkill = person.skills.find((item) => item.name.toLowerCase() === 'angular');
+    return angularSkill ? angularSkill.level :null
+}
 const isDesignerPersons = (person) => {
     const designer = specializations.find((specialization) => specialization.name.toLowerCase() === 'designer');
-    return person.personal.specializationId === designer.id;
+    return person.personal.specializationId === designer.id
 }
 const hasFigmaSkill = (person) => {
-   return  person.skills.find((item) => item.name.toLowerCase() === 'figma');
+    return  person.skills.find((item) => item.name.toLowerCase() === 'figma')
 }
 const getFigmaSkills = (person) => {
     const figmaSkill = person.skills.find((item) => item.name.toLowerCase() === 'figma');
     return figmaSkill ? figmaSkill.level : null
 }
-
-
-let bestFront = null;
-const frontAngular = persons.filter((person) => {
-    return isFrontDev(person) && hasAngularSkill(person)
-});
-
-bestFront = frontAngular.reduce((result, current) =>{
-    let prev = getAngularSkill(result);
-    let curr = getAngularSkill(current);
-    return prev > curr ? result : current;
-}, frontAngular[0]);
-
-const isFrontDev = (person) => {
-    const frontend = specializations.find((item) => item.name.toLowerCase() === 'frontend');
-    return person.personal.specializationId === frontend.id;
+const isBackDev = (person) => {
+    const backend = specializations.find((item) => item.name.toLowerCase() === 'backend');
+    return person.personal.specializationId === backend.id
 };
-const hasAngularSkill = (person) => {
-    return person.skills.find((item) => item.name.toLowerCase() === 'angular');
+const hasGoSkill = (person) => {
+    return person.skills.find((item) => item.name.toLowerCase() === 'go')
 };
-const getAngularSkill = (person) => {
-    const angularSkill = person.skills.find((item) => item.name.toLowerCase() === 'angular');
-    return angularSkill ? angularSkill.level :null ;
+const getGoSkill = (person) => {
+    const goSkill = person.skills.find((item) => item.name.toLowerCase() === 'go');
+    return goSkill ? goSkill.level :null
 }
-console.log(bestFront)
-
-
-
-
-
-
-function topTeam() {
-
-}
-
